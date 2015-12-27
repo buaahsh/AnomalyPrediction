@@ -62,9 +62,9 @@ if __name__ == "__main__":
     features = ["CPU_CAP", "CPU_USAGE", "MEM_CAP", "MEM_USAGE", "CPU_AVAI", 
                 "MEM_AVAI", "NET_IN", "NET_OUT", "VBD_OO", "VBD_RD", "VBD_WR", 
                 "LOAD1", "LOAD5"]
-    inputFiles = ["..//..//data//RUBiSLogs//all//cpu.data", 
-                "..//..//data//RUBiSLogs//all//mem.data",
-                "..//..//data//RUBiSLogs//all//network.data"]
+    inputFiles = ["..//..//..//data//RUBiSLogs//all//cpu.data", 
+                "..//..//..//data//RUBiSLogs//all//mem.data",
+                "..//..//..//data//RUBiSLogs//all//network.data"]
     leadTimes = [40, 50, 10]
-    outputFile = "../../data/RUBiSLogs/all/all.data"
+    outputFile = "../../../data/RUBiSLogs/all/all.data"
     cleaner(outputFile, features, inputFiles, leadTimes)

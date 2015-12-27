@@ -80,9 +80,9 @@ def trainSklearn(model, grid, train, target, cv, refit=True, n_jobs=5, multi=Fal
     return best_pred, model
 
 
-def loadTrainSet(dir='csv.l'):
+def loadTrainSet(dir='../../../data/RUBiSLogs/all/all.data'):
     """
-    Read in JSON to create training set.
+    Read in dataset to create training set.
     """
     import pandas as pd
     from pandas import DataFrame
