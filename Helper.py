@@ -43,8 +43,14 @@ def trainSklearn(model, grid, train, target, cv, refit=True, n_jobs=5, multi=Fal
         pred = zeros((train.shape[0], target[0].unique().shape[0]))
         score_func = accuracy_score
     else:
-        from sklearn.metrics import roc_auc_score
-        score_func = roc_auc_score
+        # from sklearn.metrics import roc_auc_score
+        # score_func = roc_auc_score
+        def evaluatle(true, pred):
+            from sklearn import metrics      
+            fpr, tpr, thresholds = metrics.roc_curve(true, pred)
+            return metrics.auc(fpr, tpr) 
+
+        score_func = evaluatle
         pred = zeros(train.shape[0])
     best_score = 0
     for g in ParameterGrid(grid):
@@ -68,10 +74,13 @@ def trainSklearn(model, grid, train, target, cv, refit=True, n_jobs=5, multi=Fal
             results = fitSklearnAll(train, target, model, multi)
             if multi:
                 score = score_func(target, results['pred'].argmax(1))
+            else:
+                score = score_func(target, results['pred'])
         if score > best_score:
             best_score = score
             best_pred = pred.copy()
             best_grid = g
+    print best_score
     print "Best Score: %0.5f" % best_score
     print "Best Grid", best_grid
     if refit:
@@ -80,7 +89,7 @@ def trainSklearn(model, grid, train, target, cv, refit=True, n_jobs=5, multi=Fal
     return best_pred, model
 
 
-def loadTrainSet(dir='../../../data/RUBiSLogs/all/all.data'):
+def loadTrainSet(dir='/Users/hsh/downloads/all.data'):
     """
     Read in dataset to create training set.
     """
@@ -88,6 +97,8 @@ def loadTrainSet(dir='../../../data/RUBiSLogs/all/all.data'):
     from pandas import DataFrame
     from sklearn.preprocessing import LabelEncoder
     X = pd.read_csv(dir)
+    X = X[X.Label < 2]
+    print "Length of instances:", X.shape[0]
     encoder = LabelEncoder()
     y = DataFrame(encoder.fit_transform(X.iloc[:, -1]))
     X = DataFrame(X.iloc[:, 1: -1])

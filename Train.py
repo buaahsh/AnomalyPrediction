@@ -5,10 +5,14 @@ from Helper import *
 from sklearn.feature_selection import chi2, SelectPercentile, f_classif, SelectKBest
 
 from sklearn.svm import SVC
+from sklearn import tree
+from sklearn.naive_bayes import GaussianNB
 
 pipe = Pipeline([
     # ('feat', SelectPercentile(chi2)),
-    ('model', SVC(probability=True))
+    # ('model', SVC(probability=True))
+    # ('model', tree.DecisionTreeClassifier())
+    ('model', GaussianNB())
 ])
 
 grid = {
@@ -21,9 +25,11 @@ grid = {
 def main():
     # load data
     train, target, encoder = loadTrainSet()
-    # cv = KFold(train.shape[0], n_folds=1, shuffle=True)
+    # cv = KFold(train.shape[0], n_folds=4, shuffle=True)
     cv = None
-    pred, model = trainSklearn(pipe,grid,train,target,cv,n_jobs=2,multi=True)
+    # pred, model = trainSklearn(pipe,grid,train,target,cv,n_jobs=2,multi=True)
+
+    pred, model = trainSklearn(pipe,grid,train,target,cv,n_jobs=2,multi=False)
 
     # model = SVC(probability=True).fit(train,target)
     # z = {"pred": model.predict_proba(train), "index":0}
