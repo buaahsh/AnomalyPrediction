@@ -11,15 +11,16 @@ from sklearn import tree
 from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import LinearSVC
 from sklearn.neighbors import KNeighborsClassifier
-
+from sklearn.ensemble import GradientBoostingClassifier
 
 pipe = Pipeline([
     # ('feat', SelectPercentile(chi2)),
     # ('model', SVC(probability=True))
     # ('model', tree.DecisionTreeClassifier())
-    ('model', GaussianNB())
+    # ('model', GaussianNB())
     # ('model', LinearSVC())
     # ('model', KNeighborsClassifier(n_neighbors=35))
+    ('model', GradientBoostingClassifier(n_estimators=20, min_samples_split=10))
 ])
 
 grid = {
@@ -34,8 +35,8 @@ def evaluate(true, pred):
     from sklearn import metrics
     import matplotlib.pyplot as plt
 
-    DumpObj(true, "GaussianNB.true")
-    DumpObj(pred, "GaussianNB.pred")
+    DumpObj(true, "GradientBoostingClassifier.true")
+    DumpObj(pred, "GradientBoostingClassifier.pred")
 
     fpr, tpr, thresholds = metrics.roc_curve(true, pred, pos_label=1)
     plt.plot(fpr, tpr)
