@@ -30,7 +30,7 @@ def fitSklearnCV(X, y, cv, i, model, multi=False):
         return {"pred": model.predict_proba(X.iloc[vl])[:, 1], "index": vl}
 
 
-def trainSklearn(model, grid, train, target, cv, refit=True, n_jobs=5, multi=False):
+def trainSklearn(model, grid, train, target, cv, refit=True, n_jobs=5, multi=False, evaluation=None):
     """
     Train a sklearn pipeline or model using textual data as input.
     """
@@ -45,13 +45,15 @@ def trainSklearn(model, grid, train, target, cv, refit=True, n_jobs=5, multi=Fal
     else:
         # from sklearn.metrics import roc_auc_score
         # score_func = roc_auc_score
-        def evaluatle(true, pred):
+        def evaluate(true, pred):
             from sklearn import metrics      
             fpr, tpr, thresholds = metrics.roc_curve(true, pred)
             return metrics.auc(fpr, tpr) 
 
-        score_func = evaluatle
+        score_func = evaluate
         pred = zeros(train.shape[0])
+    if evaluation:
+        score_func = evaluation
     best_score = 0
     for g in ParameterGrid(grid):
         model.set_params(**g)
@@ -62,6 +64,7 @@ def trainSklearn(model, grid, train, target, cv, refit=True, n_jobs=5, multi=Fal
             else:
                 results = Parallel(n_jobs=n_jobs)(delayed(fitSklearnCV)(
                     train, target, list(cv), i, model, multi) for i in range(cv.n_folds))
+
             if multi:
                 for i in results:
                     pred[i['index'], :] = i['pred']
@@ -80,6 +83,8 @@ def trainSklearn(model, grid, train, target, cv, refit=True, n_jobs=5, multi=Fal
             best_score = score
             best_pred = pred.copy()
             best_grid = g
+
+
     print best_score
     print "Best Score: %0.5f" % best_score
     print "Best Grid", best_grid
@@ -89,7 +94,7 @@ def trainSklearn(model, grid, train, target, cv, refit=True, n_jobs=5, multi=Fal
     return best_pred, model
 
 
-def loadTrainSet(dir='/Users/hsh/downloads/all.data'):
+def loadTrainSet(dir='C:/Users/Shaohan/Documents/project/anomaly_prediction/data/RUBiSLogs/all/all.data'):
     """
     Read in dataset to create training set.
     """
@@ -107,3 +112,10 @@ def loadTrainSet(dir='/Users/hsh/downloads/all.data'):
 
 def loadTestSet(dir='../data/test.json'):
     pass
+
+
+if __name__ == "__main__":
+    
+    plt.plot([1, 2, 3])
+    plt.ylabel('some numbers')
+    plt.show()
