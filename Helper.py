@@ -94,7 +94,8 @@ def trainSklearn(model, grid, train, target, cv, refit=True, n_jobs=5, multi=Fal
     return best_pred, model
 
 
-def loadTrainSet(dir='C:/Users/Shaohan/Documents/project/anomaly_prediction/data/RUBiSLogs/all/all.data'):
+# def loadTrainSet(dir='C:/Users/Shaohan/Documents/project/anomaly_prediction/data/RUBiSLogs/all/all.data'):
+def loadTrainSet(dir='/Users/hsh/Downloads/all.data'):
     """
     Read in dataset to create training set.
     """
@@ -109,13 +110,33 @@ def loadTrainSet(dir='C:/Users/Shaohan/Documents/project/anomaly_prediction/data
     X = DataFrame(X.iloc[:, 1: -1])
     return X, y, encoder
 
+def loadRNNTrainSet(dir='/Users/hsh/Downloads/all.data'):
+    from numpy import array
+    import numpy as np
+    X = []
+    y = []
+    vocab_size = 13
+    with open(dir, "r") as fIn:
+        i = 0
+        for line in fIn:
+            line = line.strip()
+            if line.endswith("2"):
+                continue
+            i += 1
+            if i == 1:
+                continue
+
+            temp = np.zeros((vocab_size,1))
+            tokens = line.split(",")
+            for j, t in enumerate(tokens[1:-1]):
+                temp[j] = float(t)
+            X.append(temp)
+            y.append(float(tokens[-1]))
+    return X, y, None
 
 def loadTestSet(dir='../data/test.json'):
     pass
 
 
 if __name__ == "__main__":
-    
-    plt.plot([1, 2, 3])
-    plt.ylabel('some numbers')
-    plt.show()
+    pass

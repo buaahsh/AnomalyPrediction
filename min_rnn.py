@@ -6,20 +6,21 @@ import numpy as np
 from Helper import *
 
 # data I/O
-data, y, encoder = loadTrainSet()
+data, y, encoder = loadRNNTrainSet()
 
 # hyperparameters
 vocab_size = 13
 hidden_size = 10 # size of hidden layer of neurons
 seq_length = 50 # number of steps to unroll the RNN for
 learning_rate = 1e-1
+output_size = 2
 
 # model parameters
 Wxh = np.random.randn(hidden_size, vocab_size)*0.01 # input to hidden
 Whh = np.random.randn(hidden_size, hidden_size)*0.01 # hidden to hidden
-Why = np.random.randn(vocab_size, hidden_size)*0.01 # hidden to output
+Why = np.random.randn(output_size, hidden_size)*0.01 # hidden to output
 bh = np.zeros((hidden_size, 1)) # hidden bias
-by = np.zeros((vocab_size, 1)) # output bias
+by = np.zeros((output_size, 1)) # output bias
 
 
 def lossFun(inputs, targets, hprev):
@@ -33,8 +34,10 @@ def lossFun(inputs, targets, hprev):
   loss = 0
   # forward pass
   for t in xrange(len(inputs)):
-    xs[t] = np.zeros((vocab_size,1)) # encode in 1-of-k representation
-    xs[t][inputs[t]] = 1
+    # xs[t] = np.zeros((vocab_size,1)) # encode in 1-of-k representation
+    # xs[t][inputs[t]] = 1
+    # no need for one-hot
+    xs[t] = inputs[t]
     hs[t] = np.tanh(np.dot(Wxh, xs[t]) + np.dot(Whh, hs[t-1]) + bh) # hidden state
     ys[t] = np.dot(Why, hs[t]) + by # unnormalized log probabilities for next chars
     ps[t] = np.exp(ys[t]) / np.sum(np.exp(ys[t])) # probabilities for next chars
@@ -69,17 +72,17 @@ def sample(h, inputs, outputs):
     y = np.dot(Why, h) + by
     p = np.exp(y) / np.sum(np.exp(y))
     prebs.append(p)
-    print p, y[i]
+    print p, outputs[i]
   return prebs
 
 def main():
-  n, p = 0, 0
+  n, p = 1, 0
   mWxh, mWhh, mWhy = np.zeros_like(Wxh), np.zeros_like(Whh), np.zeros_like(Why)
   mbh, mby = np.zeros_like(bh), np.zeros_like(by) # memory variables for Adagrad
   smooth_loss = -np.log(1.0/vocab_size)*seq_length # loss at iteration 0
   while n < 1000:
     # prepare inputs (we're sweeping from left to right in steps seq_length long)
-    if p+seq_length+1 >= len(data) or n == 0: 
+    if p+seq_length+1 >= len(data) or n == 1:
       hprev = np.zeros((hidden_size,1)) # reset RNN memory
       p = 0 # go from start of data
     inputs = data[p:p+seq_length]
@@ -88,8 +91,7 @@ def main():
     # sample from the model now and then
     if n % 100 == 0:
       sample_ix = sample(hprev, inputs, targets)
-      txt = ''.join(ix_to_char[ix] for ix in sample_ix)
-      print '----\n %s \n----' % (txt, )
+
 
     # forward seq_length characters through the net and fetch gradient
     loss, dWxh, dWhh, dWhy, dbh, dby, hprev = lossFun(inputs, targets, hprev)
