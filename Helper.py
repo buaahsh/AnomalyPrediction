@@ -94,8 +94,8 @@ def trainSklearn(model, grid, train, target, cv, refit=True, n_jobs=5, multi=Fal
     return best_pred, model
 
 
-# def loadTrainSet(dir='C:/Users/Shaohan/Documents/project/anomaly_prediction/data/RUBiSLogs/all/all.data'):
-def loadTrainSet(dir='/Users/hsh/Downloads/all.data'):
+def loadTrainSet(dir='C:/Users/Shaohan/Documents/project/anomaly_prediction/data/RUBiSLogs/all/all.data'):
+# def loadTrainSet(dir='/Users/hsh/Downloads/all.data'):
     """
     Read in dataset to create training set.
     """
@@ -110,7 +110,8 @@ def loadTrainSet(dir='/Users/hsh/Downloads/all.data'):
     X = DataFrame(X.iloc[:, 1: -1])
     return X, y, encoder
 
-def loadRNNTrainSet(dir='/Users/hsh/Downloads/all.data'):
+def loadRNNTrainSet(dir='C:/Users/Shaohan/Documents/project/anomaly_prediction/data/RUBiSLogs/all/all.data'):
+# def loadRNNTrainSet(dir='/Users/hsh/Downloads/all.data'):
     from numpy import array
     import numpy as np
     X = []
