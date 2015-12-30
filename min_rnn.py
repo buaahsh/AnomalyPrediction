@@ -59,7 +59,10 @@ class RNN(object):
         dhnext = np.zeros_like(hs[0])
         for t in reversed(xrange(len(inputs))):
             dy = np.copy(ps[t])
-            dy[targets[t]] -= 1  # backprop into y
+            c = 1
+            if targets[t] == 1:
+                c = 20
+            dy[targets[t]] -= c  # backprop into y
             dWhy += np.dot(dy, hs[t].T)
             dby += dy
             dh = np.dot(self.Why.T, dy) + dhnext  # backprop into h
@@ -82,13 +85,15 @@ class RNN(object):
         # if h == None:
         #   h = np.zeros((self.hidden_size,1))
         prebs = []
-        print self.bh
         for i, x in enumerate(inputs):
-            h = np.tanh(np.dot(self.Wxh, x) + np.dot(self.Whh, h) + self.bh)
+            if h is None:
+                h = np.tanh(np.dot(self.Wxh, x) + self.bh)
+            else:
+                h = np.tanh(np.dot(self.Wxh, x) + np.dot(self.Whh, h) + self.bh)
             y = np.dot(self.Why, h) + self.by
             p = np.exp(y) / np.sum(np.exp(y))
             prebs.append(p[1][0])
-            print p, outputs[i]
+            # print p, outputs[i]
         return prebs
 
     def train(self, data, y):
@@ -99,7 +104,7 @@ class RNN(object):
             self.by)  # memory variables for Adagrad
         smooth_loss = -np.log(1.0 / self.vocab_size) * \
             self.seq_length  # loss at iteration 0
-        while n < 8000:
+        while n < 100000:
             # prepare inputs (we're sweeping from left to right in steps
             # seq_length long)
             if p + self.seq_length + 1 >= len(data) or n == 1:
@@ -109,17 +114,14 @@ class RNN(object):
             targets = y[p:p + self.seq_length]
 
             # sample from the model now and then
-            if n % 1000 == 0:
-                sample_ix = self.sample(inputs, targets, hprev)
+            # if n % 100 == 0:
+            #     # print self.Wxh
+            #     sample_ix = self.sample(inputs, targets, hprev)
 
             # forward seq_length characters through the net and fetch gradient
             loss, dWxh, dWhh, dWhy, dbh, dby, hprev = self.lossFun(
                 inputs, targets, hprev)
-            # self.Wxh += dWxh
-            # self.Whh += dWhh
-            # self.Why += dWhy
-            # self.bh += dbh
-            # self.by += dby
+
             smooth_loss = smooth_loss * 0.999 + loss * 0.001
             if n % 100 == 0:
                 print 'iter %d, loss: %f' % (n, smooth_loss)  # print progress
@@ -141,7 +143,7 @@ if __name__ == "__main__":
     X, y, encoder = loadRNNTrainSet()
     rnn = RNN()
     rnn.train(X, y)
-    # from Train import evaluate
-    # pred = rnn.sample(X)
-    # # print pred
-    # evaluate(y, pred)
+    from Train import evaluate
+    pred = rnn.sample(X)
+    # print pred
+    evaluate(y, pred)

@@ -110,9 +110,16 @@ def loadTrainSet(dir='C:/Users/Shaohan/Documents/project/anomaly_prediction/data
     X = DataFrame(X.iloc[:, 1: -1])
     return X, y, encoder
 
-def loadRNNTrainSet(dir='C:/Users/Shaohan/Documents/project/anomaly_prediction/data/RUBiSLogs/all/all.data'):
-# def loadRNNTrainSet(dir='/Users/hsh/Downloads/all.data'):
+# def loadRNNTrainSet(dir='C:/Users/Shaohan/Documents/project/anomaly_prediction/data/RUBiSLogs/all/all.data'):
+def loadRNNTrainSet(dir='/Users/hsh/Downloads/all.data'):
     from numpy import array
+    import pandas as pd
+    from pandas import DataFrame
+    from sklearn.preprocessing import LabelEncoder
+    X = pd.read_csv(dir)
+    X = DataFrame(X[X.Label < 2].iloc[:, 1: -1])
+    X_max = DataFrame(X.describe()).loc['max', :]
+
     import numpy as np
     X = []
     y = []
@@ -130,7 +137,10 @@ def loadRNNTrainSet(dir='C:/Users/Shaohan/Documents/project/anomaly_prediction/d
             temp = np.zeros((vocab_size,1))
             tokens = line.split(",")
             for j, t in enumerate(tokens[1:-1]):
-                temp[j] = float(t)
+                if X_max[j] == 0:
+                    temp[j] = 0
+                else:
+                    temp[j] = float(t) / X_max[j]
             X.append(temp)
             y.append(float(tokens[-1]))
     return X, y, None
@@ -140,4 +150,4 @@ def loadTestSet(dir='../data/test.json'):
 
 
 if __name__ == "__main__":
-    pass
+    loadRNNTrainSet()
