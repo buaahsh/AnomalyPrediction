@@ -12,10 +12,10 @@ class RNN(object):
     def __init__(self):
         super(RNN, self).__init__()
 
-        # hyperparameters
+        # hyper parameters
         self.vocab_size = 13
-        self.hidden_size = 10  # size of hidden layer of neurons
-        self.seq_length = 50  # number of steps to unroll the RNN for
+        self.hidden_size = 40  # size of hidden layer of neurons
+        self.seq_length = 10  # number of steps to unroll the RNN for
         self.learning_rate = 1e-1
         self.output_size = 2
 
@@ -61,7 +61,7 @@ class RNN(object):
             dy = np.copy(ps[t])
             c = 1
             if targets[t] == 1:
-                c = 20
+                c = 4
             dy[targets[t]] -= c  # backprop into y
             dWhy += np.dot(dy, hs[t].T)
             dby += dy
@@ -96,6 +96,17 @@ class RNN(object):
             # print p, outputs[i]
         return prebs
 
+    def predict(self, data):
+        p = 0
+        preds = []
+        while True:
+            if p + self.seq_length + 1 >= len(data):
+                break
+            inputs = data[p:p + self.seq_length]
+            preds += self.sample(inputs)
+            p += self.seq_length
+        return preds
+
     def train(self, data, y):
         n, p = 1, 0
         mWxh, mWhh, mWhy = np.zeros_like(self.Wxh), np.zeros_like(
@@ -104,7 +115,7 @@ class RNN(object):
             self.by)  # memory variables for Adagrad
         smooth_loss = -np.log(1.0 / self.vocab_size) * \
             self.seq_length  # loss at iteration 0
-        while n < 100000:
+        while n < 30000:
             # prepare inputs (we're sweeping from left to right in steps
             # seq_length long)
             if p + self.seq_length + 1 >= len(data) or n == 1:
@@ -112,6 +123,12 @@ class RNN(object):
                 p = 0  # go from start of data
             inputs = data[p:p + self.seq_length]
             targets = y[p:p + self.seq_length]
+
+            p += 1  # move data pointer
+            n += 1  # iteration counter
+
+            if targets[-1] != 1:
+                continue
 
             # sample from the model now and then
             # if n % 100 == 0:
@@ -134,8 +151,7 @@ class RNN(object):
                 param += -self.learning_rate * dparam / \
                     np.sqrt(mem + 1e-8)  # adagrad update
 
-            p += self.seq_length  # move data pointer
-            n += 1  # iteration counter
+
 
 
 if __name__ == "__main__":
@@ -144,6 +160,7 @@ if __name__ == "__main__":
     rnn = RNN()
     rnn.train(X, y)
     from Train import evaluate
-    pred = rnn.sample(X)
+    # pred = rnn.sample(X)
     # print pred
-    evaluate(y, pred)
+    pred = rnn.predict(X)
+    evaluate(y[0:len(pred)], pred)
