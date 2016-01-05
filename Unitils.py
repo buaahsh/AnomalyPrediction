@@ -20,15 +20,15 @@ def ComputeLeadtime(true, pred):
     for t, p in zip(true, pred):
         if t == 1:
             isAlert += 1
-            if p == 1 and temp == 0:
+            if p > 0.4 and temp == 0:
                 temp = isAlert
         else:
             if temp != 0:
-                res.append(isAlert - temp)
+                res.append(min(isAlert - temp, 50))
             isAlert = 0
             temp = 0
     if temp:
-        res.append(isAlert - temp)
+        res.append(min(isAlert - temp, 50))
     return (sum(res) + len(res)) * 1.0 / len(res)
 
 
@@ -40,8 +40,8 @@ def MultiPlot():
         pred = LoadObj(label + ".pred")
         fpr, tpr, thresholds = metrics.roc_curve(true, pred)
         print label, metrics.auc(fpr, tpr)
-        print sum(true)
-        # print label, ComputeLeadtime(true, pred)
+        # print sum(true[0])
+        print label, ComputeLeadtime(true[0], pred)
         ax.plot(fpr, tpr, arg, label=label)
     ax = pl.subplot()
     SinglePlot(ax, "y", "RNN")
