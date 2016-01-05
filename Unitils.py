@@ -18,12 +18,16 @@ def MultiPlot():
         from sklearn import metrics      
         true = LoadObj(label + ".true")
         pred = LoadObj(label + ".pred")
+        print len(true)
+        print len(pred)
         fpr, tpr, thresholds = metrics.roc_curve(true, pred)
         ax.plot(fpr, tpr, arg, label=label)
     ax = pl.subplot()
+    SinglePlot(ax, "y", "RNN")
     SinglePlot(ax, "r", "KNeighbors")
     SinglePlot(ax, "b", "GaussianNB")
     SinglePlot(ax, "g", "GradientBoosting")
+    
 
     ax.plot([0, 0.5, 1], [0, 0.5, 1], "k--", label="Random Chance")
 

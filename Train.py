@@ -12,6 +12,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import LinearSVC
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.ensemble import AdaBoostClassifier
 
 pipe = Pipeline([
     # ('feat', SelectPercentile(chi2)),
@@ -20,7 +21,8 @@ pipe = Pipeline([
     # ('model', GaussianNB())
     # ('model', LinearSVC())
     # ('model', KNeighborsClassifier(n_neighbors=35))
-    ('model', GradientBoostingClassifier(n_estimators=20, min_samples_split=10))
+    # ('model', GradientBoostingClassifier(n_estimators=20, min_samples_split=10))
+    ('model', AdaBoostClassifier(n_estimators=100))
 ])
 
 grid = {
@@ -35,8 +37,8 @@ def evaluate(true, pred):
     from sklearn import metrics
     import matplotlib.pyplot as plt
 
-    DumpObj(true, "GradientBoostingClassifier.true")
-    DumpObj(pred, "GradientBoostingClassifier.pred")
+    DumpObj(true, "AdaBoost.true")
+    DumpObj(pred, "AdaBoost.pred")
 
     fpr, tpr, thresholds = metrics.roc_curve(true, pred, pos_label=1)
     plt.plot(fpr, tpr)
