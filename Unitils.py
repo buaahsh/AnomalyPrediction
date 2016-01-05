@@ -12,15 +12,36 @@ def LoadObj(fileName):
     obj = p.load(f)
     return obj
 
+
+def ComputeLeadtime(true, pred):
+    res = []
+    isAlert = 0
+    temp = 0
+    for t, p in zip(true, pred):
+        if t == 1:
+            isAlert += 1
+            if p == 1 and temp == 0:
+                temp = isAlert
+        else:
+            if temp != 0:
+                res.append(isAlert - temp)
+            isAlert = 0
+            temp = 0
+    if temp:
+        res.append(isAlert - temp)
+    return (sum(res) + len(res)) * 1.0 / len(res)
+
+
 def MultiPlot():
     import matplotlib.pyplot as pl
     def SinglePlot(ax, arg, label):
         from sklearn import metrics      
         true = LoadObj(label + ".true")
         pred = LoadObj(label + ".pred")
-        print len(true)
-        print len(pred)
         fpr, tpr, thresholds = metrics.roc_curve(true, pred)
+        print label, metrics.auc(fpr, tpr)
+        print sum(true)
+        # print label, ComputeLeadtime(true, pred)
         ax.plot(fpr, tpr, arg, label=label)
     ax = pl.subplot()
     SinglePlot(ax, "y", "RNN")
@@ -40,3 +61,6 @@ def MultiPlot():
 
 if __name__ == "__main__":
     MultiPlot()
+    # true = [0,0,1,1,1,1,0,0,0,0,1,1,1,0]
+    # pred = [0,0,0,1,1,1,0,0,0,0,1,0,1,0]
+    # print ComputeLeadtime(true, pred)
