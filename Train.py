@@ -22,7 +22,7 @@ pipe = Pipeline([
     # ('model', LinearSVC())
     # ('model', KNeighborsClassifier(n_neighbors=35))
     # ('model', GradientBoostingClassifier(n_estimators=20, min_samples_split=10))
-    ('model', AdaBoostClassifier(n_estimators=100))
+    ('model', AdaBoostClassifier(n_estimators=200))
 ])
 
 grid = {
@@ -37,8 +37,8 @@ def evaluate(true, pred):
     from sklearn import metrics
     import matplotlib.pyplot as plt
 
-    DumpObj(true, "AdaBoost.true")
-    DumpObj(pred, "AdaBoost.pred")
+    DumpObj(true, "RNN2.true")
+    DumpObj(pred, "RNN2.pred")
 
     fpr, tpr, thresholds = metrics.roc_curve(true, pred, pos_label=1)
     plt.plot(fpr, tpr)

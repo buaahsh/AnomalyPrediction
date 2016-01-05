@@ -20,7 +20,7 @@ def ComputeLeadtime(true, pred):
     for t, p in zip(true, pred):
         if t == 1:
             isAlert += 1
-            if p > 0.4 and temp == 0:
+            if p > 0.2 and temp == 0:
                 temp = isAlert
         else:
             if temp != 0:
