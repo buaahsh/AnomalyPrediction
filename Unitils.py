@@ -20,7 +20,7 @@ def ComputeLeadtime(true, pred):
     for t, p in zip(true, pred):
         if t == 1:
             isAlert += 1
-            if p > 0.2 and temp == 0:
+            if p > 0.5 and temp == 0:
                 temp = isAlert
         else:
             if temp != 0:
@@ -36,14 +36,15 @@ def MultiPlot():
     import matplotlib.pyplot as pl
     def SinglePlot(ax, arg, label):
         from sklearn import metrics      
-        true = LoadObj(label + ".true")
-        pred = LoadObj(label + ".pred")
+        true = LoadObj("result/" + label + ".true")
+        pred = LoadObj("result/" + label + ".pred")
         fpr, tpr, thresholds = metrics.roc_curve(true, pred)
         print label, metrics.auc(fpr, tpr)
         # print sum(true[0])
         print label, ComputeLeadtime(true[0], pred)
         ax.plot(fpr, tpr, arg, label=label)
     ax = pl.subplot()
+    SinglePlot(ax, "k", "RNN2")
     SinglePlot(ax, "y", "RNN")
     SinglePlot(ax, "r", "KNeighbors")
     SinglePlot(ax, "b", "GaussianNB")
