@@ -3,11 +3,11 @@ public class Test {
 		// TODO Auto-generated method stub
 		String str1 = "aaacaaa";
 		String str2 = "aca";
-		String str3 = "a";
-		System.out.println(Func(str1, str2, str3));
+		String str3 = "aa";
+		System.out.println(func(str1, str2, str3));
 	}
 	
-	public static String Func(String str1, String str2, String str3) {
+	public static String func(String str1, String str2, String str3) {
 		boolean b1 = Output(str1, str2, str3);
 		boolean b2 = Output(reverse1(str1) , str2, str3);
 		if (b1 && b2)
@@ -25,20 +25,13 @@ public class Test {
 	
 	public static boolean Output(String str1, String str2, String str3){
 		int start = 0;
-		for (int i = 0; i < str2.length(); i++) {
-			char temp = str2.charAt(i);
-			int t = str1.indexOf(temp, start);
-			if (t == -1)
-				return false;
-			start = t + 1;
-		}
-		for (int i = 0; i < str3.length(); i++) {
-			char temp = str3.charAt(i);
-			int t = str1.indexOf(temp, start);
-			if (t == -1)
-				return false;
-			start = t + 1;
-		}
+		int t = str1.indexOf(str2, start);
+		if (t == -1)
+			return false;
+		start = t + 1;
+		t = str1.indexOf(str3, start);
+		if (t == -1)
+			return false;
 		return true;
 	}
 	
