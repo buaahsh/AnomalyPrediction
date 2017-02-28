@@ -104,7 +104,8 @@ def trainSklearn(model, grid, train, target, cv, refit=True, n_jobs=5, multi=Fal
 
 
 # def loadTrainSet(dir='C:/Users/Shaohan/Documents/project/anomaly_prediction/data/RUBiSLogs/all/all.data'):
-def loadTrainSet(dir='/Users/hsh/Downloads/temp/r'):
+#rubis.txt-1.out
+def loadTrainSet(dir='/Users/hsh/Downloads/anomaly_data/r/rubis.txt.out', filter=True):
     """
     Read in dataset to create training set.
     """
@@ -112,10 +113,12 @@ def loadTrainSet(dir='/Users/hsh/Downloads/temp/r'):
     from pandas import DataFrame
     from sklearn.preprocessing import LabelEncoder
     X = pd.read_csv(dir)
-    X = X[X.Label < 2]
+    if filter:
+        X = X[X.Label < 2]
     print "Length of instances:", X.shape[0]
     encoder = LabelEncoder()
-    y = DataFrame(encoder.fit_transform(X.iloc[:, -1]))
+    # y = DataFrame(encoder.fit_transform(X.iloc[:, -1]))
+    y = X['Label']
     X = DataFrame(X.iloc[:, 1: -1])
     return X, y, encoder
 

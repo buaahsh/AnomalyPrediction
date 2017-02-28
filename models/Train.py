@@ -4,9 +4,11 @@ from sklearn.pipeline import Pipeline
 from Helper import *
 from models.Unitils import *
 
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.ensemble import GradientBoostingClassifier
 
 # from sklearn.naive_bayes import GaussianNB
-from sklearn.neighbors import KNeighborsClassifier
+# from sklearn.neighbors import KNeighborsClassifier
 
 pipe = Pipeline([
     # ('feat', SelectPercentile(chi2)),
@@ -14,8 +16,8 @@ pipe = Pipeline([
     # ('core', tree.DecisionTreeClassifier())
     # ('core', GaussianNB())
     # ('core', LinearSVC())
-    ('core', KNeighborsClassifier(n_neighbors=15))
-    # ('core', GradientBoostingClassifier(n_estimators=20, min_samples_split=10))
+    # ('core', KNeighborsClassifier(n_neighbors=15))
+    ('core', GradientBoostingClassifier(n_estimators=20, min_samples_split=10))
     # ('core', AdaBoostClassifier(n_estimators=20))
 ])
 
@@ -31,23 +33,45 @@ def evaluate(true, pred):
     from sklearn import metrics
     import matplotlib.pyplot as plt
 
-    DumpObj(true, "15RNN.true")
-    DumpObj(pred, "15RNN.pred")
+    # DumpObj(true, "15RNN.true")
+    # DumpObj(pred, "15RNN.pred")
 
     fpr, tpr, thresholds = metrics.roc_curve(true, pred, pos_label=1)
-    plt.plot(fpr, tpr)
-    plt.show()
-    return metrics.auc(fpr, tpr) 
+    # plt.plot(fpr, tpr)
+    # plt.show()
+    print(metrics.auc(fpr, tpr))
+    return metrics.auc(fpr, tpr)
 
 def main():
     # load data
     train, target, encoder = loadTrainSet()
-    cv = KFold(train.shape[0], n_folds=4, shuffle=True)
+    # cv = KFold(train.shape[0], n_folds=4, shuffle=True)
     # cv = None
     # pred, core = trainSklearn(pipe,grid,train,target,cv,n_jobs=2,multi=True)
 
-    pred, model = trainSklearn(pipe,grid,train,target,cv,n_jobs=2,multi=False, evaluation=evaluate)
+    # pred, model = trainSklearn(pipe,grid,train,target,cv,n_jobs=2,multi=False, evaluation=evaluate)
 
+    clf = GradientBoostingClassifier(n_estimators=120, learning_rate=1.0, max_depth=3, random_state=0).fit(train, target)
+
+    train, target, encoder = loadTrainSet(filter=False)
+    score = clf.predict_proba(train)
+    # score = clf.predict(train)
+    new_score = []
+    for s in score:
+        if s[0] > s[1]:
+        # if s < 0.5:
+            new_score.append(0)
+        else:
+            # new_score.append(s)
+            new_score.append(s[1])
+    print(len(new_score))
+    print(sum(new_score))
+
+    import pandas as pd
+    dir='/Users/hsh/Downloads/anomaly_data/r/rubis.txt.out'
+    X = pd.read_csv(dir)
+    X['Score'] = new_score
+    X.to_csv(dir + '.re', index=None)
     # pred, core = trainSklearn(pipe,grid,train,target,cv,n_jobs=2,multi=False)
 
     # core = SVC(probability=True).fit(train,target)
