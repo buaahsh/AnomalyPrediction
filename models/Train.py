@@ -68,7 +68,7 @@ def main():
     print(sum(new_score))
 
     import pandas as pd
-    dir='/Users/hsh/Downloads/anomaly_data/r/rubis.txt.out'
+    dir='/Users/hsh/Documents/2015/AnomalyClassifier/y_out/i/all.data.out'
     X = pd.read_csv(dir)
     X['Score'] = new_score
     X.to_csv(dir + '.re', index=None)

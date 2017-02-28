@@ -105,7 +105,7 @@ def trainSklearn(model, grid, train, target, cv, refit=True, n_jobs=5, multi=Fal
 
 # def loadTrainSet(dir='C:/Users/Shaohan/Documents/project/anomaly_prediction/data/RUBiSLogs/all/all.data'):
 #rubis.txt-1.out
-def loadTrainSet(dir='/Users/hsh/Downloads/anomaly_data/r/rubis.txt.out', filter=True):
+def loadTrainSet(dir='/Users/hsh/Documents/2015/AnomalyClassifier/y_out/i/all.data.out', filter=True):
     """
     Read in dataset to create training set.
     """
