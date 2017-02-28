@@ -10,7 +10,7 @@ def cleaner(outputFile, features,  inputFiles, leadTimes):
     value
     """
     with open(outputFile, "w") as fOut:
-        print >>fOut, '{0},{1},{2}'.format('Time', ",".join(features), "Label") 
+        print('{0},{1},{2}'.format('Time', ",".join(features), "Label"), file=fOut)
         for inputFile, leadTime  in zip(inputFiles, leadTimes) :
             cleanFile(inputFile, fOut, leadTime)
             
@@ -47,7 +47,7 @@ def cleanFile(inputFile, fOut, leadTime):
 
     for line, l in zip(_list, label[::-1]):
         newLine = convertLine(line)
-        print >>fOut, '{0},{1}'.format(newLine, l) 
+        print('{0},{1}'.format(newLine, l), file=fOut)
 
 def convertLine(line, isLabel=False):
     line = line.strip()
@@ -62,10 +62,9 @@ if __name__ == "__main__":
     features = ["CPU_CAP", "CPU_USAGE", "MEM_CAP", "MEM_USAGE", "CPU_AVAI", 
                 "MEM_AVAI", "NET_IN", "NET_OUT", "VBD_OO", "VBD_RD", "VBD_WR", 
                 "LOAD1", "LOAD5"]
-    inputFiles = ["/Users/hsh/Downloads/temp/h/1.log",
-                "/Users/hsh/Downloads/temp/h/2.log",
-                "/Users/hsh/Downloads/temp/h/3.log",
-                "/Users/hsh/Downloads/temp/h/4.log"]
-    leadTimes = [50, 50, 50, 50]
-    outputFile = "/Users/hsh/Downloads/temp/h/h1"
+    inputFiles = ["C:\\Users\\Shaohan\\Desktop\\ibm_t\\1",
+                "C:\\Users\\Shaohan\\Desktop\\ibm_t\\2",
+                "C:\\Users\\Shaohan\\Desktop\\ibm_t\\3"]
+    leadTimes = [50, 3, 6]
+    outputFile = "C:\\Users\\Shaohan\\Desktop\\ibm_t\\all.data"
     cleaner(outputFile, features, inputFiles, leadTimes)
